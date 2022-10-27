@@ -1,0 +1,10 @@
+{
+    "name": "xoxoday/sms",
+    "description": "This package contains the API code for sending SMS.",
+    "autoload": {
+        "psr-4": {
+            "Xoxoday\\Sms\\": "src/"
+        }
+    },
+    "require": {}
+}
