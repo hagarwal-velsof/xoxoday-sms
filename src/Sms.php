@@ -32,11 +32,7 @@ class Sms
 
         $response = Http::asForm()->post($url_sms, $payload);
 
-        // dd($response->object());
-
-        $response = curl_exec($curl);
-        $response_array = json_decode($response, true);
-
+     
         if ($response->status() == 200) {
             $result = json_decode(json_encode($response->object()), true);
             if (isset($result['status']) && $result['status'] == "OK") {
