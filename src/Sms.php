@@ -14,7 +14,7 @@ class Sms
      *
      * @param String  $mobile       Reciever Mobile Number
      * @param String  $template     Content of the SMS
-     * @param String  $variable     To replace variable in template with actual value
+     * @param String  $variable     To replace variable in template with actual values
      * 
      * @return Boolean
      */
@@ -25,7 +25,7 @@ class Sms
 
         $payload = array(
             "method" => "sms",
-            "to" => "91" . $mobile,
+            "to" => "91" . $mobile,  
             "sender" => Config('app.sms_sender_id'),
             "message" => str_replace("{{1}}", $variable, $template)
         );
