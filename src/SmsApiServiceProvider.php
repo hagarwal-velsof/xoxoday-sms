@@ -13,7 +13,7 @@ class SmsApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        
     }
 
     /**
@@ -23,6 +23,12 @@ class SmsApiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->loadMigrationsFrom(__DIR__.'/Database/Migrations');
+        if ($this->app->runningInConsole()) {
+            // Publish assets
+            $this->publishes([
+              __DIR__.'/config/kaleyra.php' => config_path('kaleyra.php')
+            ], 'sms_config');
+        }
     }
 }
