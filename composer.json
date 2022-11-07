@@ -6,5 +6,12 @@
             "Xoxoday\\Sms\\": "src/"
         }
     },
-    "require": {}
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Xoxoday\\Sms\\SmsApiServiceProvider"
+            ]
+        }
+    }
 }

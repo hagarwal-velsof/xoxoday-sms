@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sms_tables', function (Blueprint $table) {
+        Schema::create('xosms_messages', function (Blueprint $table) {
             $table->id();
             $table->text('message');
             $table->text('response')->nullable();
-            $table->string('mobile', 12);
+            $table->string('mobile', 20);
             $table->tinyInteger('status'); //0 means added in queue and 1 means delivered
             $table->timestamps();
         });

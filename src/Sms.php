@@ -3,8 +3,7 @@
 namespace  Xoxoday\Sms;
 
 use Config;
-use Illuminate\Support\Facades\Http;
-use  Xoxoday\Sms\Model\SmsTable;
+use  Xoxoday\Sms\Model\XosmsMessage;
 
 class Sms
 {
@@ -19,7 +18,7 @@ class Sms
 
         //creating an entry for the request in the sms table
         try {
-            $sms = SmsTable::create([
+            $sms = XosmsMessage::create([
                 'message' => $template,
                 'response' => '',
                 'status' => 0,
@@ -30,29 +29,73 @@ class Sms
            return false;
         }
 
-        // Fetch values from ENV/Config File
-        $url_sms =  Config('kaleyra.sms_api_url') . Config('kaleyra.sms_api_key');
+        if($sms){
 
-        // Prepare the data to be sent to Gateway
-        $payload = array(
-            'method' => "sms",
-            'to' => $country . $mobile,
-            'sender' => Config('kaleyra.sms_sender_id'),
-            'message' =>  $template
-        );
-
-        // Send the request to Gateway
-        $response = Http::asForm()->post($url_sms, $payload);
-
-        // Return the response
-        if ($response->status() == 200) {
-            $result = json_decode(json_encode($response->object()), true);
-
-            if (isset($result['status']) && $result['status'] == "OK") {
-                return true;
-            }
+            //Creating an entry for the job to send sms
+            $details = array(
+                'country' =>  $country,
+                'mobile' => $mobile,
+                'template' => $template,
+                'sms_id' => $sms['id'],
+                );
+            dispatch(new \App\Jobs\SendSmsRequest($details)); 
+            return $sms['id'];    
         }
 
+        return false;        
+    }
+
+    public function getSmsStatus($sms_id){
+        if($sms_id != '' ){
+            $status = '';
+            try {
+                $sms_details = XosmsMessage::where('id', $sms_id)->first();
+            } catch (QueryException $ex) {
+               return false;
+            }
+
+            if($sms_details){
+                if($sms_details['status'] == 0){
+                    $status = 'Pending';
+                }elseif($sms_details['status'] == 1){
+                    $status = 'Delivered';
+                }else{
+                    $status = 'Failed';
+                }
+                return $status;
+            }
+        }
         return false;
+    }
+
+    public function getOverallDeliveryStatus(){
+        $data = XosmsMessage::groupBy('status')->selectRaw('count(*) as total, status')->pluck('total', 'status');
+        $status_wise_data = array();
+        $total_sms = 0;
+
+        foreach($data as $key => $value){
+            $total_sms += $value;
+            if($key == 0){
+                $status_wise_data[] = array(
+                    'status' => 'Pending',
+                    'total' => $value
+                );
+            }else if($key == 1){
+                $status_wise_data[] = array(
+                    'status' => 'Deilvered',
+                    'total' => $value
+                );
+            }else if($key == 2){
+                $status_wise_data[] = array(
+                    'status' => 'Failed',
+                    'total' => $value
+                );
+            }
+        }
+        $complete_data = array(
+            'total_sms' => $total_sms,
+            'status_wise_data' => $status_wise_data
+        );
+        return $complete_data;
     }
 }

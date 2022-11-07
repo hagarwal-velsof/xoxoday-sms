@@ -27,8 +27,9 @@ class SmsApiServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             // Publish assets
             $this->publishes([
-              __DIR__.'/config/kaleyra.php' => config_path('kaleyra.php')
-            ], 'sms_config');
+              __DIR__.'/config/xosms.php' => config_path('xosms.php'),
+              __DIR__.'/Jobs/SendSmsRequest.php' => app_path('Jobs\SendSmsRequest.php')
+            ], 'sms_files');
         }
     }
 }
