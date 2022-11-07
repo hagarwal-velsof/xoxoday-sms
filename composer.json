@@ -1,6 +1,6 @@
 {
     "name": "xoxoday/sms",
-    "description": "This package contains the API code for sending SMS.",
+    "description": "This package contains the API code for sending SMS using Kalyera.",
     "autoload": {
         "psr-4": {
             "Xoxoday\\Sms\\": "src/"
